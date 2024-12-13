@@ -1,0 +1,906 @@
+<!--DOCTYPE html-->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--==Title====================================================-->
+    <title>Slider</title>
+    <!--==CSS======================================================-->
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/shine.css">
+    <!--==Using-Font-Awesome-for-Icons=============================-->
+    <script src="https://kit.fontawesome.com/6bd6c771de.js" crossorigin="anonymous"></script>
+    <!--==Import-Font-Family-From-Google-Font======================-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <!--==Swiper-css===============================================-->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+</head>
+
+<body>
+    <!-- <div class="section-border" id="animatedBackgroundSection">
+        <div class="section-background">
+            <div class="section-background-content">
+                <div class="section-background-canvas background-fx-canvas">
+                    <canvas id="backgroundCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="icons_background.js"></script>     -->
+
+    <style>
+        .section-border {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            clip-path: url(#section-divider-clip);
+        }
+
+        .section-background {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+        }
+
+        .section-background-canvas {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+    </style>
+
+    <div class="section-border" data-controller="SectionDivider">
+        <div class="section-background">
+            <div class="section-background-content" data-controller="BackgroundShapes">
+                <div class="section-background-canvas background-fx-canvas">
+                    <canvas id="backgroundCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <svg style="display: none;">
+        <clipPath id="section-divider-clip" clipPathUnits="objectBoundingBox">
+            <path
+                d="M-1, 0.972 L-1, 0.986 c0.25,-0.01792 0.25,-0.01792 0.5,0 s0.25,0.01792 0.5,0c0.25,-0.01792 0.25,-0.01792 0.5,0 s0.25,0.01792 0.5,0c0.25,-0.01792 0.25,-0.01792 0.5,0 s0.25,0.01792 0.5,0 L1,-1 L0,-1 z">
+            </path>
+        </clipPath>
+    </svg>
+
+    <script>
+        const canvas = document.getElementById('backgroundCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const shapes = [];
+        const colors = ['#ff8e1d', '#ffac58', '#fef3e0', '#ffc489', '#d77f1d', '#c78b45', '#f6d3a7'];
+
+        function randomRange(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        class Shape {
+            constructor(x, y, size, speedX, speedY, color) {
+                this.x = x;
+                this.y = y;
+                this.size = size;
+                this.speedX = speedX;
+                this.speedY = speedY;
+                this.color = color;
+                this.growth = randomRange(-0.1, 0.1);
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.size += this.growth;
+
+                if (this.size < 15 || this.size > 70) { // Изменяем размеры на 15-70
+                    this.growth = -this.growth; // Меняем направление роста
+                }
+
+                if (this.x - this.size < 0 || this.x + this.size > canvas.width) {
+                    this.speedX = -this.speedX;
+                }
+                if (this.y - this.size < 0 || this.y + this.size > canvas.height) {
+                    this.speedY = -this.speedY;
+                }
+
+                this.draw();
+            }
+        }
+
+        function initShapes() {
+            for (let i = 0; i < 300; i++) {
+                const size = randomRange(15, 70); // Увеличиваем начальный размер
+                const x = randomRange(size, canvas.width - size);
+                const y = randomRange(size, canvas.height - size);
+                const speedX = randomRange(-0.5, 0.5);
+                const speedY = randomRange(-0.5, 0.5);
+                const color = colors[Math.floor(randomRange(0, colors.length))];
+
+                shapes.push(new Shape(x, y, size, speedX, speedY, color));
+            }
+        }
+
+        function animateShapes() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            shapes.forEach(shape => shape.update());
+            requestAnimationFrame(animateShapes);
+        }
+
+        initShapes();
+        animateShapes();
+    </script>
+
+    <!-- Контейнер для текста -->
+    <div class="container">
+        <!-- <div class="message">Vielen Dank!</div>
+        <div class="message">Der Bezahlungslink wird Ihnen innerhalb von zwei Stunden per E-Mail zugesandt!</div> -->
+
+        <div class="section">
+            <div class="text">
+                <p class="highlight">Möchtest du optimal vorbereitet sein</p>, um an unseren Simulationen, Aufnahmeprüfungen oder anderen wichtigen Tests erfolgreich teilzunehmen? Entdecke sie jetzt:
+            </div>
+        </div>
+    </div>
+    <!--==Slider Kurse============================-->
+    <section id="slider-section">
+
+        <!--**Swiper******************************-->
+        <div class="swiper mySwiper">
+
+            <div class="swiper-wrapper">
+
+                <!-- 14.12.2024 -->
+                <div class="swiper-slide">
+                    <!--**slider-box**********************-->
+                    <div class="slider-box"
+                        style="background: radial-gradient(circle at 50% 50%, #f06530, #555365, #683c3d);">
+
+                        <!--**img**-->
+                        <div class="slider-box-img">
+                            <a href="#" class="owner-img">
+                                <img
+                                    src="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/51099920-37f1-4b2c-8786-155868e02a66/Daria.png?content-type=image%2Fpng" />
+                                <i class="fa-solid fa-square-check" style="color: #fff6ed;"></i>
+                                <span class="mentor-info">
+                                    Geschäftsassistentin des CEO (Verantwortliche Personen für die Organisation des Prozesses)
+                                    <button class="mentor-button" onclick="openModal('DariaCherkasovaModal')">Erfahren Sie
+                                        mehr</button>
+                                </span>
+                            </a>
+
+                            <img class="box-main-img"
+                                src="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/3d5f6b73-1b0a-400f-9b9b-2a7d0b371f65/einstufungstests.png?content-type=image%2Fpng" />
+                            <!-- <div class="slider-bidder">
+                                <div class="slider-bidder-img">
+                                    <img
+                                        src="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/71cafaca-6a49-4a27-9bd9-302f9a30b4df/student_icon.png?content-type=image%2Fpng" />
+                                    <img
+                                        src="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/71cafaca-6a49-4a27-9bd9-302f9a30b4df/student_icon.png?content-type=image%2Fpng" />
+                                    <img
+                                        src="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/71cafaca-6a49-4a27-9bd9-302f9a30b4df/student_icon.png?content-type=image%2Fpng" />
+                                </div>
+                                <span>Gruppe bis zu 6 Personen</span>
+                            </div> -->
+                            <div class="shine"></div>
+                        </div>
+                        <!--**-text**-->
+
+                        <div class="slider-box-text">
+                            <a>Einstufungstests</a>
+                            <span class="highest-bid" style="color: #ffe7b4;">Wir führen Einstufungstests durch, um
+                                Ihren Wissensstand zu ermitteln!</span>
+                            <div class="price-like">
+                                <span class="price">Datum: 14.12.2024 ab 8:00</span>
+                            </div>
+
+                            <button class="preis-button"
+                                onclick="window.open('https://www.intraclass.de/simulation-14-12-2024', '_blank')">
+                                Na los! 
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 23.11.24 -->
+                <div class="swiper-slide">
+                    <!--**slider-box**********************-->
+                    <div class="slider-box">
+                        <!--**img**-->
+                        <div class="slider-box-img">
+                            <a href="#" class="owner-img">
+                                <img
+                                    src="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/51099920-37f1-4b2c-8786-155868e02a66/Daria.png?content-type=image%2Fpng" />
+                                <i class="fa-solid fa-square-check" style="color: #ed6b2e;"></i>
+                                <span class="mentor-info">
+                                    Geschäftsassistentin des CEO (Verantwortliche Personen für die Organisation des Prozesses)
+                                    <button class="mentor-button" onclick="openModal('DariaCherkasovaModal')">Erfahren Sie
+                                        mehr</button>
+                                </span>
+                            </a>
+                            <a href="#" class="owner-img">
+                                <img
+                                    src="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/0eca8206-0601-48c5-a3bc-0d2a10a434ad/IMG_0013.PNG?content-type=image%2Fjpeg" />
+                                <i class="fa-solid fa-square-check" style="color: #ed6b2e;"></i>
+                                <span class="mentor-info">
+                                    Dozentin für Deutsch Katja Baschenow (Dieser Kurs wird von einem unserer Dozenten
+                                    geleitet)
+                                    <button class="mentor-button" onclick="openKatjaBaschenowModal()">Erfahren Sie
+                                        mehr</button>
+                                </span>
+                            </a>
+                            <img
+                                src="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/53a23d2c-e658-4060-b1e4-c5abc2dd13d2/simulation+vorbei.png?content-type=image%2Fpng" />
+                            <div class="slider-bidder">
+                                <div class="slider-bidder-img">
+                                    <img
+                                        src="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/71cafaca-6a49-4a27-9bd9-302f9a30b4df/student_icon.png?content-type=image%2Fpng" />
+                                    <img
+                                        src="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/71cafaca-6a49-4a27-9bd9-302f9a30b4df/student_icon.png?content-type=image%2Fpng" />
+                                    <img
+                                        src="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/71cafaca-6a49-4a27-9bd9-302f9a30b4df/student_icon.png?content-type=image%2Fpng" />
+                                </div>
+                                <span>Persönliche Tests für jede</span>
+                            </div>
+                        </div>
+                        <!--**-text**-->
+
+                        <div class="slider-box-text">
+                            <a>Simulation</a>
+                            <span class="highest-bid">Wählen Sie eine geeignete Simulation aus und beginnen Sie mit der Durchführung. Vergessen Sie anschließend nicht, Ihre Antworten über die allerletzte Schaltfläche zu senden</span>
+                            <div class="price-like">
+                                <span class="price">Datum: 23.11.2024(ist vorbei)</span>
+                            </div>
+
+                            <button class="preis-button"
+                                onclick="window.open('https://www.intraclass.de/simulation-23-11-2024', '_blank')">
+                                Na los!(schon vorbei)
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="swiper-pagination"></div>
+        <script src="owner-script.js"></script>
+    </section>
+
+    <!-- Swiper JS -->
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+    <!-- Initialize Swiper -->
+    <script>
+        var swiper = new Swiper(".mySwiper", {
+            slidesPerView: 1,
+            spaceBetween: 10,
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+            },
+            breakpoints: {
+                500: {
+                    slidesPerView: 2,
+                    spaceBetween: 10,
+                },
+                768: {
+                    slidesPerView: 3,
+                    spaceBetween: 20,
+                },
+                1024: {
+                    slidesPerView: 3,
+                    spaceBetween: 20,
+                },
+                1200: {
+                    slidesPerView: 4,
+                    spaceBetween: 20,
+                },
+            },
+            autoplay: {
+                delay: 5000, // Задержка между слайдами в миллисекундах
+                disableOnInteraction: false, // Не отключать автопрокрутку при взаимодействии
+                pauseOnMouseEnter: true,
+            },
+        });
+    </script>
+
+    <!-- Модальное окно Katja Baschenow -->
+    <div class="modal" id="KatjaBaschenowModal">
+        <div class="modal-content">
+            <button class="close" onclick="closeKatjaBaschenowModal()">&times;</button>
+            <div class="description">
+                <h2>Lernen wir uns besser kennen!</h2>
+                <div class="content-container">
+                    <div class="resume-container" onclick="flipResume('resumeImageKatjaBaschenow')">
+                        <img id="resumeImageKatjaBaschenow"
+                            src="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/bf90324e-99c7-4611-8c20-6d5a401c1484/3.png?content-type=image%2Fpng"
+                            alt="Lebenslauf"
+                            data-src-de="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/bf90324e-99c7-4611-8c20-6d5a401c1484/3.png?content-type=image%2Fpng"
+                            data-src-ru="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/0e8bce2c-4cba-4b3c-a5bf-00993952f4ca/4.png?content-type=image%2Fpng" />
+                    </div>
+                    <div class="video-container">
+                        <iframe id="katjaVideo"
+                            src="https://www.youtube.com/embed/pCOEmQIFtHc?enablejsapi=1&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&autohide=1"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+            <!-- Правая колонка с кружками и заголовком -->
+            <div class="mentor-sidebar">
+                <h3>Verantwortliche Personen für die Organisation des Prozesses</h3>
+
+                <!-- Daria -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/51099920-37f1-4b2c-8786-155868e02a66/Daria.png?content-type=image%2Fpng');"
+                    onclick="switchModal('KatjaBaschenowModal', 'DariaCherkasovaModal')">
+                    <i class="fa-solid fa-user-check"></i>
+                </div>
+
+                <!-- Maxim -->
+                <!-- <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/84ab78a3-b876-4287-9c2a-19156445ed69/Maxim.png?content-type=image%2Fpng');"
+                    onclick="switchModal('KatjaBaschenowModal', 'MaximTugarinovModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div> -->
+
+                <h3>Erfahren Sie mehr über andere Dozenten</h3>
+
+                <!-- Daria Hill -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/01ee46cb-d946-48ab-b89c-107d91677706/Bildschirmfoto+2024-08-26+um+01.00.31.png?content-type=image%2Fpng');"
+                    onclick="switchModal('KatjaBaschenowModal', 'DariaHillModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Cecilia Raimundo -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/1782950e-0d58-49b8-aead-9aecf4243f48/IMG_0012.jpeg?content-type=image%2Fjpeg');"
+                    onclick="switchModal('KatjaBaschenowModal', 'CeciliaRaimundoModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Maja -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/4ddffc41-5508-4474-8d30-4ae3252a13ef/maja.png?content-type=image%2Fpng');"
+                    onclick="switchModal('KatjaBaschenowModal', 'MajaModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Evgenij -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/8d3281d8-d75d-4e89-8407-52e4843c8a3f/evgenij.png?content-type=image%2Fpng');"
+                    onclick="switchModal('KatjaBaschenowModal', 'EvgeniiModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно Daria Hill -->
+    <div class="modal" id="DariaHillModal">
+        <div class="modal-content">
+            <button class="close" onclick="closeModal('DariaHillModal')">&times;</button>
+            <div class="description">
+                <h2>Lernen wir uns besser kennen!</h2>
+                <div class="content-container">
+                    <div class="resume-container" onclick="flipResume('resumeImageDariaHill')">
+                        <img id="resumeImageDariaHill"
+                            src="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/3b7ebd84-02fe-4fd4-a292-c6d2ea86540d/9.png?content-type=image%2Fpng"
+                            alt="Lebenslauf"
+                            data-src-de="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/3b7ebd84-02fe-4fd4-a292-c6d2ea86540d/9.png?content-type=image%2Fpng"
+                            data-src-ru="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/17525c0e-b87b-445a-8cef-c82a2cd5adc6/10.png?content-type=image%2Fpng" />
+                    </div>
+                </div>
+            </div>
+            <!-- Правая колонка с кружками и заголовком -->
+            <div class="mentor-sidebar">
+                <h3>Verantwortliche Personen für die Organisation des Prozesses</h3>
+
+                <!-- Daria -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/51099920-37f1-4b2c-8786-155868e02a66/Daria.png?content-type=image%2Fpng');"
+                    onclick="switchModal('DariaHillModal', 'DariaCherkasovaModal')">
+                    <i class="fa-solid fa-user-check"></i>
+                </div>
+
+                <!-- Maxim -->
+                <!-- <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/84ab78a3-b876-4287-9c2a-19156445ed69/Maxim.png?content-type=image%2Fpng');"
+                    onclick="switchModal('DariaHillModal', 'MaximTugarinovModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div> -->
+
+                <h3>Erfahren Sie mehr über andere Dozenten</h3>
+
+                <!-- Katja Baschenow -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/0eca8206-0601-48c5-a3bc-0d2a10a434ad/IMG_0013.PNG?content-type=image%2Fjpeg');"
+                    onclick="switchModal('DariaHillModal', 'KatjaBaschenowModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Cecilia Raimundo -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/1782950e-0d58-49b8-aead-9aecf4243f48/IMG_0012.jpeg?content-type=image%2Fjpeg');"
+                    onclick="switchModal('DariaHillModal', 'CeciliaRaimundoModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Maja -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/4ddffc41-5508-4474-8d30-4ae3252a13ef/maja.png?content-type=image%2Fpng');"
+                    onclick="switchModal('DariaHillModal', 'MajaModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Evgenij -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/8d3281d8-d75d-4e89-8407-52e4843c8a3f/evgenij.png?content-type=image%2Fpng');"
+                    onclick="switchModal('DariaHillModal', 'EvgeniiModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно Cecilia Raimundo -->
+    <div class="modal" id="CeciliaRaimundoModal">
+        <div class="modal-content">
+            <button class="close" onclick="closeModal('CeciliaRaimundoModal')">&times;</button>
+            <div class="description">
+                <h2>Lernen wir uns besser kennen!</h2>
+                <div class="content-container">
+                    <div class="resume-container" onclick="flipResume('resumeImage2')">
+                        <img id="resumeImage2"
+                            src="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/c6dabc9d-d81f-4ece-b080-337d6ecd8b73/1.png?content-type=image%2Fpng"
+                            alt="Lebenslauf"
+                            data-src-de="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/c6dabc9d-d81f-4ece-b080-337d6ecd8b73/1.png?content-type=image%2Fpng"
+                            data-src-ru="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/47ccd286-36f0-44f9-8a3b-e0974364aa78/2.png?content-type=image%2Fpng" />
+                    </div>
+                </div>
+            </div>
+            <!-- Правая колонка с кружками и заголовком -->
+            <div class="mentor-sidebar">
+                <h3>Verantwortliche Personen für die Organisation des Prozesses</h3>
+
+                <!-- Daria -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/51099920-37f1-4b2c-8786-155868e02a66/Daria.png?content-type=image%2Fpng');"
+                    onclick="switchModal('CeciliaRaimundoModal', 'DariaCherkasovaModal')">
+                    <i class="fa-solid fa-user-check"></i>
+                </div>
+
+                <!-- Maxim -->
+                <!-- <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/84ab78a3-b876-4287-9c2a-19156445ed69/Maxim.png?content-type=image%2Fpng');"
+                    onclick="switchModal('CeciliaRaimundoModal', 'MaximTugarinovModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div> -->
+
+                <h3>Erfahren Sie mehr über andere Dozenten</h3>
+
+                <!-- Daria Hill -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/01ee46cb-d946-48ab-b89c-107d91677706/Bildschirmfoto+2024-08-26+um+01.00.31.png?content-type=image%2Fpng');"
+                    onclick="switchModal('CeciliaRaimundoModal', 'DariaHillModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Katja Baschenow -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/0eca8206-0601-48c5-a3bc-0d2a10a434ad/IMG_0013.PNG?content-type=image%2Fjpeg');"
+                    onclick="switchModal('CeciliaRaimundoModal', 'KatjaBaschenowModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Maja -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/4ddffc41-5508-4474-8d30-4ae3252a13ef/maja.png?content-type=image%2Fpng');"
+                    onclick="switchModal('CeciliaRaimundoModal', 'MajaModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Evgenij -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/8d3281d8-d75d-4e89-8407-52e4843c8a3f/evgenij.png?content-type=image%2Fpng');"
+                    onclick="switchModal('CeciliaRaimundoModal', 'EvgeniiModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно Evgenii -->
+    <div class="modal" id="EvgeniiModal">
+        <div class="modal-content">
+            <button class="close" onclick="closeModal('EvgeniiModal')">&times;</button>
+            <div class="description">
+                <h2>Lernen wir uns besser kennen!</h2>
+                <div class="content-container">
+                    <div class="resume-container" onclick="flipResume('resumeImageEvgenii')">
+                        <img id="resumeImageEvgenii"
+                            src="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/87a55671-8ce3-4844-87b9-abd32726eeec/7.png?content-type=image%2Fpng"
+                            alt="Lebenslauf"
+                            data-src-de="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/87a55671-8ce3-4844-87b9-abd32726eeec/7.png?content-type=image%2Fpng"
+                            data-src-ru="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/f41a2cde-35fe-4a2a-893c-a44c99b94734/8.png?content-type=image%2Fpng" />
+                    </div>
+                </div>
+            </div>
+            <!-- Правая колонка с кружками и заголовком -->
+            <div class="mentor-sidebar">
+                <h3>Verantwortliche Personen für die Organisation des Prozesses</h3>
+
+                <!-- Daria -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/51099920-37f1-4b2c-8786-155868e02a66/Daria.png?content-type=image%2Fpng');"
+                    onclick="switchModal('EvgeniiModal', 'DariaCherkasovaModal')">
+                    <i class="fa-solid fa-user-check"></i>
+                </div>
+
+                <!-- Maxim -->
+                <!-- <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/84ab78a3-b876-4287-9c2a-19156445ed69/Maxim.png?content-type=image%2Fpng');"
+                    onclick="switchModal('EvgeniiModal', 'MaximTugarinovModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div> -->
+
+                <h3>Erfahren Sie mehr über andere Dozenten</h3>
+
+                <!-- Daria Hill -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/01ee46cb-d946-48ab-b89c-107d91677706/Bildschirmfoto+2024-08-26+um+01.00.31.png?content-type=image%2Fpng');"
+                    onclick="switchModal('EvgeniiModal', 'DariaHillModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Katja Baschenow -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/0eca8206-0601-48c5-a3bc-0d2a10a434ad/IMG_0013.PNG?content-type=image%2Fjpeg');"
+                    onclick="switchModal('EvgeniiModal', 'KatjaBaschenowModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Maja -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/4ddffc41-5508-4474-8d30-4ae3252a13ef/maja.png?content-type=image%2Fpng');"
+                    onclick="switchModal('EvgeniiModal', 'MajaModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Cecilia Raimundo -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/1782950e-0d58-49b8-aead-9aecf4243f48/IMG_0012.jpeg?content-type=image%2Fjpeg');"
+                    onclick="switchModal('EvgeniiModal', 'CeciliaRaimundoModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно Maja -->
+    <div class="modal" id="MajaModal">
+        <div class="modal-content">
+            <button class="close" onclick="closeModal('MajaModal')">&times;</button>
+            <div class="description">
+                <h2>Lernen wir uns besser kennen!</h2>
+                <div class="content-container">
+                    <div class="resume-container" onclick="flipResume('resumeImageMaja')">
+                        <img id="resumeImageMaja"
+                            src="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/8b6179df-c823-4d4b-b877-44d7713592c0/5.png?content-type=image%2Fpng"
+                            alt="Lebenslauf"
+                            data-src-de="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/8b6179df-c823-4d4b-b877-44d7713592c0/5.png?content-type=image%2Fpng"
+                            data-src-ru="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/b326c0ff-b04c-42f6-b0b2-af409ba22278/6.png?content-type=image%2Fpng" />
+                    </div>
+                </div>
+            </div>
+            <!-- Правая колонка с кружками и заголовком -->
+            <div class="mentor-sidebar">
+                <h3>Verantwortliche Personen für die Organisation des Prozesses</h3>
+
+                <!-- Daria -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/51099920-37f1-4b2c-8786-155868e02a66/Daria.png?content-type=image%2Fpng');"
+                    onclick="switchModal('MajaModal', 'DariaCherkasovaModal')">
+                    <i class="fa-solid fa-user-check"></i>
+                </div>
+
+                <!-- Maxim -->
+                <!-- <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/84ab78a3-b876-4287-9c2a-19156445ed69/Maxim.png?content-type=image%2Fpng');"
+                    onclick="switchModal('MajaModal', 'MaximTugarinovModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div> -->
+
+                <h3>Erfahren Sie mehr über andere Dozenten</h3>
+
+                <!-- Daria Hill -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/01ee46cb-d946-48ab-b89c-107d91677706/Bildschirmfoto+2024-08-26+um+01.00.31.png?content-type=image%2Fpng');"
+                    onclick="switchModal('MajaModal', 'DariaHillModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Katja Baschenow -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/0eca8206-0601-48c5-a3bc-0d2a10a434ad/IMG_0013.PNG?content-type=image%2Fjpeg');"
+                    onclick="switchModal('MajaModal', 'KatjaBaschenowModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Cecilia Raimundo -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/1782950e-0d58-49b8-aead-9aecf4243f48/IMG_0012.jpeg?content-type=image%2Fjpeg');"
+                    onclick="switchModal('MajaModal', 'CeciliaRaimundoModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Evgenij -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/8d3281d8-d75d-4e89-8407-52e4843c8a3f/evgenij.png?content-type=image%2Fpng');"
+                    onclick="switchModal('MajaModal', 'EvgeniiModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно Daria Cherkasova -->
+    <div class="modal" id="DariaCherkasovaModal">
+        <div class="modal-content">
+            <button class="close" onclick="closeModal('DariaCherkasovaModal')">&times;</button>
+            <div class="description">
+                <h2>Lernen wir uns besser kennen!</h2>
+                <div class="content-container">
+                    <div class="resume-container" onclick="flipResume('resumeImageDariaCherkasova')">
+                        <img id="resumeImageDariaCherkasova"
+                            src="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/2208c695-98a6-4a35-8f16-2c41595ced23/14.png?content-type=image%2Fpng"
+                            alt="Lebenslauf"
+                            data-src-de="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/2208c695-98a6-4a35-8f16-2c41595ced23/14.png?content-type=image%2Fpng"
+                            data-src-ru="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/4207ec0d-14f7-4249-b2fe-89a1fa7cd658/13.png?content-type=image%2Fpng" />
+                    </div>
+                </div>
+            </div>
+            <!-- Правая колонка с кружками и заголовком -->
+            <div class="mentor-sidebar">
+                <h3>Verantwortliche Personen für die Organisation des Prozesses</h3>
+
+                <!-- Daria -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/51099920-37f1-4b2c-8786-155868e02a66/Daria.png?content-type=image%2Fpng');">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Maxim -->
+                <!-- <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/84ab78a3-b876-4287-9c2a-19156445ed69/Maxim.png?content-type=image%2Fpng');">
+                    <i class="fa-solid fa-user-check"></i>
+                </div> -->
+
+                <h3>Erfahren Sie mehr über andere Dozenten</h3>
+
+                <!-- Daria Hill -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/01ee46cb-d946-48ab-b89c-107d91677706/Bildschirmfoto+2024-08-26+um+01.00.31.png?content-type=image%2Fpng');"
+                    onclick="switchModal('DariaCherkasovaModal', 'DariaHillModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Katja Baschenow -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/0eca8206-0601-48c5-a3bc-0d2a10a434ad/IMG_0013.PNG?content-type=image%2Fjpeg');"
+                    onclick="switchModal('DariaCherkasovaModal', 'KatjaBaschenowModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Cecilia Raimundo -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/1782950e-0d58-49b8-aead-9aecf4243f48/IMG_0012.jpeg?content-type=image%2Fjpeg');"
+                    onclick="switchModal('DariaCherkasovaModal', 'CeciliaRaimundoModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Evgenij -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/8d3281d8-d75d-4e89-8407-52e4843c8a3f/evgenij.png?content-type=image%2Fpng');"
+                    onclick="switchModal('DariaCherkasovaModal', 'EvgeniiModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Maja -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/4ddffc41-5508-4474-8d30-4ae3252a13ef/maja.png?content-type=image%2Fpng');"
+                    onclick="switchModal('DariaCherkasovaModal', 'MajaModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно Maxim Tugarinov -->
+    <div class="modal" id="MaximTugarinovModal">
+        <div class="modal-content">
+            <button class="close" onclick="closeModal('MaximTugarinovModal')">&times;</button>
+            <div class="description">
+                <h2>Lernen wir uns besser kennen!</h2>
+                <div class="content-container">
+                    <div class="resume-container" onclick="flipResume('resumeImageMaximTugarinov')">
+                        <img id="resumeImageMaximTugarinov"
+                            src="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/a21d583d-315a-461d-b121-e2bf24e9a5f6/11.png?content-type=image%2Fpng"
+                            alt="Lebenslauf"
+                            data-src-de="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/a21d583d-315a-461d-b121-e2bf24e9a5f6/11.png?content-type=image%2Fpng"
+                            data-src-ru="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/3692f9eb-c413-4906-a5c2-c20b9aa5f42a/12.png?content-type=image%2Fpng" />
+                    </div>
+                </div>
+            </div>
+            <!-- Правая колонка с кружками и заголовком -->
+            <div class="mentor-sidebar">
+                <h3>Verantwortliche Personen für die Organisation des Prozesses</h3>
+
+                <!-- Daria -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/51099920-37f1-4b2c-8786-155868e02a66/Daria.png?content-type=image%2Fpng');"
+                    onclick="switchModal('MaximTugarinovModal', 'DariaCherkasovaModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Maxim -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/84ab78a3-b876-4287-9c2a-19156445ed69/Maxim.png?content-type=image%2Fpng');">
+                    <i class="fa-solid fa-user-check"></i>
+                </div>
+
+                <h3>Erfahren Sie mehr über andere Dozenten</h3>
+
+                <!-- Daria Hill -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/01ee46cb-d946-48ab-b89c-107d91677706/Bildschirmfoto+2024-08-26+um+01.00.31.png?content-type=image%2Fpng');"
+                    onclick="switchModal('MaximTugarinovModal', 'DariaHillModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Katja Baschenow -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/0eca8206-0601-48c5-a3bc-0d2a10a434ad/IMG_0013.PNG?content-type=image%2Fjpeg');"
+                    onclick="switchModal('MaximTugarinovModal', 'KatjaBaschenowModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Cecilia Raimundo -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/1782950e-0d58-49b8-aead-9aecf4243f48/IMG_0012.jpeg?content-type=image%2Fjpeg');"
+                    onclick="switchModal('MaximTugarinovModal', 'CeciliaRaimundoModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Evgenij -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/8d3281d8-d75d-4e89-8407-52e4843c8a3f/evgenij.png?content-type=image%2Fpng');"
+                    onclick="switchModal('MaximTugarinovModal', 'EvgeniiModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+
+                <!-- Maja -->
+                <div class="circle"
+                    style="background-image: url('https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/4ddffc41-5508-4474-8d30-4ae3252a13ef/maja.png?content-type=image%2Fpng');"
+                    onclick="switchModal('MaximTugarinovModal', 'MajaModal')">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="auto open video.js"></script>
+    <script src="image flip.js"></script>
+
+    <!-- Модальное окно VIP-Vorbereitung zu FSP im Fach Deiner Wahl (Mathe, Physik, (Bio)Chemie oder Wirtschaft) -->
+    <div class="modal" id="VIP-VorbereitungzuFSPimFachDeinerWahlModal">
+        <div class="modal-content"
+            style="background: radial-gradient(circle at 50% 50%, #2c151e, #582527, #9b3722, #4f1714);;">
+            <button class="close" onclick="closeModal('VIP-VorbereitungzuFSPimFachDeinerWahlModal')">&times;</button>
+            <img src="https://images.squarespace-cdn.com/content/6469d9b7be025722104f83d9/01f36535-42fb-4dea-a4ad-aa58c25e887f/VIP-Vorbereitung+zu+FSP+im+Fach+Deiner+Wahl+slider.png?content-type=image%2Fpng"
+                class="celebration">
+            <div class="description" style="color: #ffe7b4;">
+                <h2>Wir prüfen Ihre FSP-Bereitschaft und bewahren Sie vor „nicht bestanden“!
+                </h2>
+                <h3>Was erwartet Sie im Kurs:</h3>
+                <ul>
+                    <li>Alle FSP-relevanten Themen aus de</li>
+                    <li>2 vom Studierenden selbst gewählten Themen</li>
+                    <li>Allgemeiner Chat in WhatsApp oder Telegram für Kontakte, Fragen und Informationsaustausch</li>
+                    <li>Feedback innerhalb von 60 Minuten von 10:00 bis 18:00 Uhr</li>
+                    <li>Der Unterricht findet ausschließlich auf Deutsch statt</li>
+                    <li>Analyse aller Prüfungsaufgaben: Wissensfragen, Transferfragen und Rechenaufgaben</li>
+                    <li>Bereitstellung persönlicher urheberrechtlich geschützter Materialien</li>
+                    <li>Online-Aufzeichnung aller Unterrichte.</li>
+                </ul>
+                <h3>Grundplan:</h3>
+                <ul>
+                    <li>6 Online-Meetings (je 105 Minuten)</li>
+                    <li>zwei Wochen vor dem Prüfungstermin</li>
+                    <li>Einzelunterricht</li>
+                    <li>Nur ein freier Platz!</li>
+                </ul>
+                <button
+                    onclick="window.open('https://www.intraclass.de/intensives/p/vip-fsp-in-deutsch-2h3ml', '_blank')">Zum
+                    Kurs</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно Fit für C-Test -->
+    <div class="modal" id="FitFürCTestModal">
+        <div class="modal-content">
+            <button class="close" onclick="closeModal('FitFürCTestModal')">&times;</button>
+            <img src="https://images.squarespace-cdn.com/content/v1/6469d9b7be025722104f83d9/2d73f041-517f-4fb5-ab74-368ad9a04d4c/IMG_0988.PNG?format=1500w"
+                class="celebration">
+            <div class="description">
+                <h2>Mit diesem Kurs können Sie sich ausgezeichnet auf den C-Test vorbereiten!
+                </h2>
+                <h3>Was erwartet Sie im Kurs:</h3>
+                <ul>
+                    <li>Individuelle Herangehensweise an jeden Schüler</li>
+                    <li>Allgemeiner Chat in WhatsApp oder Telegram für Hausaufgaben, Fragen und
+                        Informationsaustausch</li>
+                    <li>Der Unterricht findet ausschließlich auf Deutsch statt</li>
+                    <li>Tests und Analysen zu folgenden Themen: Studium, KI, Landeskunde</li>
+                    <li>Schwerpunkt: Satzbau und Lückentexte (C-Test) + kurze Wiederholung
+                        wichtiger grammatikalischer
+                        Elemente der Stufe C1</li>
+                    <li>Typprüfungen KIT, München, Martin–Halle–Wittenberg, TU Berlin, Leipzig,
+                        Hannover, Köthen, Frankfurt
+                        und Marburg</li>
+                    <li>Bereitstellung von urheberrechtlich geschütztem Material</li>
+                </ul>
+                <h3>Grundplan:</h3>
+                <ul>
+                    <li>Die Tests werden Mitte Dezember stattfinden</li>
+                    <li>6 Online-Meetings (je 105 Minuten)</li>
+                    <li>Ab 4. Januar 2025. Dauer 3 Wochen (Kurstage werden später festgelegt)</li>
+                    <li>Gruppe von bis zu 6 Personen</li>
+                    <li>Die Einteilung in die Gruppen erfolgt anhand eines mündlichen und schriftlichen Tests</li>
+                </ul>
+
+                <h3>Bonus:</h3>
+                <ul>
+                    <li>Bei erfolgreicher Erledigung von 80 % der Hausaufgaben erhält der Schüler einen Test seiner Wahl
+                        als Geschenk🎁</li>
+                </ul>
+                <button onclick="window.open('https://www.intraclass.de/intensives/p/fit-fr-c-test', '_blank')">Zum
+                    Kurs</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="switch-modal.js"></script>
+    <script src="open-close-modal.js"></script>
+
+</body>
+
+</html>
