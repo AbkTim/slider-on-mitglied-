@@ -1,0 +1,984 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    font-family: Montserrat, sans-serif;
+    box-sizing: border-box;
+}
+
+ul {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+body {
+    background-color: #fff6ed;
+}
+
+/*===двигающийся фон===============================*/
+/* Основной контейнер с анимацией иконок */
+.section-border {
+    position: absolute; /* Абсолютное позиционирование */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* Низкий z-index, чтобы расположить за swiper */
+    overflow: hidden;
+}
+
+/* Стиль для canvas */
+#backgroundCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* Стиль для иконок */
+.icon {
+    position: absolute;
+    opacity: 0.7; /* Полупрозрачность для тусклости */
+/*     filter: sepia(1) hue-rotate(30deg) saturate(2) brightness(85%); Насыщенные оранжевые цвета */ 
+    transition: all 0.4s ease-in-out; /* Плавные анимации */
+}
+
+/*===текст над слайдером===============================*/
+
+/* Стиль для текста */
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    box-sizing: border-box;
+    z-index: 10;
+}
+
+.message {
+    text-align: center;
+    font-size: 1em;
+    /* Уменьшен размер текста */
+    font-weight: bold;
+    color: #333;
+    animation: fadeIn 2s ease-in-out;
+    margin-bottom: 20px;
+    /* Уменьшен отступ */
+    z-index: 10;
+}
+
+.section {
+    margin-bottom: 20px;
+    /* Уменьшен отступ */
+    text-align: center;
+    /* Центрирование текста */
+    z-index: 10;
+}
+
+.text {
+    font-size: 1.75em;
+    /* Уменьшен размер текста */
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+    /* Уменьшен отступ */
+    z-index: 10;
+}
+
+.highlight {
+    position: relative;
+    display: inline-block;
+}
+
+.highlight::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 5px;
+    /* Высота SVG-изображения */
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="5" viewBox="0 0 100 5" preserveAspectRatio="none"><path d="M0 4 Q 10 1, 20 3 T 40 4 T 60 2 T 80 3 T 100 4" stroke="%23ed6b2e" stroke-width="4" fill="transparent" /></svg>') no-repeat;
+    background-size: cover;
+    z-index: -1;
+}
+
+/*===slider===============================*/
+#slider-section {
+    max-width: 1200px;
+    max-height: 625px;
+    width: 90%;
+    margin: 5px auto;
+
+    position: relative;
+    padding-bottom: 50px;
+    /* Задаем отступ снизу для точки */
+}
+
+#slider-section h3 {
+    color: #ffffff;
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-size: 1.4rem;
+    text-transform: uppercase;
+}
+
+.slider-box {
+    width: 100%;
+    background-color: #f59c64;
+    padding: 10px;
+    margin: auto;
+    border-radius: 10px;
+}
+
+.slider-box-img {
+    width: 100%;
+    display: flex;
+    height: 320px;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.slider-box-img::after {
+    content: '';
+    position: absolute;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    /*background: rgb(23,23,23);
+    background: linear-gradient(0deg, rgba(7, 7, 7,0.4) 0%, rgba(33,33,33,0) 100%);*/
+    z-index: 1;
+}
+
+.slider-box-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: bottom;
+}
+
+.slider-bidder {
+    position: absolute;
+    left: 10px;
+    bottom: 0px;
+    z-index: 2;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.slider-bidder-img img {
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-left: -15px;
+}
+
+.slider-bidder-img img:nth-child(1) {
+    margin-left: 0px;
+}
+
+.slider-bidder span {
+    color: #eb6a2d;
+    margin-left: 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.slider-companies {
+    position: absolute;
+    left: 10px;
+    bottom: 0;
+    z-index: 2;
+    overflow: hidden; /* Скрыть переполнение */
+    white-space: nowrap; /* Отключить перенос строки */
+    width: 100%; /* Ширина блока */
+}
+
+.slider-companies-img {
+    display: inline-block; /* Делает элементы строчными */
+    animation: marquee 20s linear infinite; /* Анимация */
+}
+
+.slider-companies-img img {
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+}
+
+.slider-companies-img img:nth-child(1) {
+    margin-left: 0;
+}
+
+/* Анимация бегущей строки */
+@keyframes marquee {
+    from {
+        transform: translateX(0); /* Начальная позиция */
+    }
+    to {
+        transform: translateX(-50%); /* Конечная позиция */
+    }
+}
+
+.slider-box-img .owner-img {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    z-index: 2;
+    transition: all 0.3s ease;
+}
+
+.slider-box-img .owner-img img {
+    border-radius: 50%;
+}
+
+/* Расположение изображений по умолчанию */
+.slider-box-img .owner-img:nth-child(1) {
+    right: 10px;
+    top: 10px;
+}
+
+.slider-box-img .owner-img:nth-child(2) {
+    right: 55px;
+    top: 10px;
+}
+
+.slider-box-img .owner-img:nth-child(3) {
+    right: 100px;
+    top: 10px;
+}
+
+/* Указание на исчезновение других изображений при наведении */
+.slider-box-img .owner-img:hover~.owner-img {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Отображение информации при наведении */
+.owner-img:hover .mentor-info {
+    opacity: 1;
+    visibility: visible;
+    z-index: 3;
+}
+
+.slider-box-img .owner-img i {
+    position: absolute;
+    right: -3px;
+    bottom: -5px;
+    z-index: 3;
+    /* background-color: #ffffff; */
+    border-radius: 55%;
+}
+
+.mentor-info {
+    position: absolute;
+    left: -200px;
+    /* Расположение текста слева от изображения */
+    /* bottom: -65px; Расположение снизу для отображения полной высоты */
+    top: auto;
+    /* Убираем влияние свойства top */
+    transform: none;
+    /* Убираем трансформацию для контроля высоты */
+    background-color: #ed6b2e;
+    /* Оранжевый фон */
+    color: #F5F5DC;
+    /* Бежевый цвет текста */
+    padding: 10px;
+    /* Увеличенные отступы для лучшего визуального восприятия */
+    border-radius: 3px;
+    font-size: 12px;
+    /* Уменьшенный размер текста */
+    max-width: 200px;
+    /* Ограничиваем ширину текстового блока */
+    word-wrap: break-word;
+    /* Включаем авто перенос */
+    white-space: normal;
+    /* Разрешаем перенос строк */
+    height: auto;
+    /* Позволяет контейнеру автоматически увеличиваться в высоту */
+    opacity: 0;
+    /* Изначально текст скрыт */
+    visibility: hidden;
+    /* Текст не виден */
+    transition: opacity 0.3s ease;
+    z-index: 1;
+    /* Текст будет над картинкой, но не перекрывать ее */
+}
+
+.owner-img:hover .mentor-info {
+    opacity: 1;
+    /* Показываем текст при наведении */
+    visibility: visible;
+}
+
+/* Стиль для кнопки */
+.mentor-button {
+    display: block;
+    margin-top: 10px;
+    /* Отступ сверху между текстом и кнопкой */
+    padding: 5px 10px;
+    /* Внутренние отступы кнопки */
+    background-color: #F5F5DC;
+    /* Бежевый фон кнопки */
+    color: #ed6b2e;
+    /* Оранжевый цвет текста кнопки */
+    text-align: center;
+    text-decoration: none;
+    /* Убираем подчеркивание ссылки */
+    border-radius: 3px;
+    /* Скругленные углы кнопки */
+    font-size: 12px;
+    /* Размер текста кнопки */
+    border: 1px solid #ed6b2e;
+    /* Оранжевая граница кнопки */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.mentor-button:hover {
+    background-color: #ed6b2e;
+    /* Оранжевый фон кнопки при наведении */
+    color: #F5F5DC;
+    /* Бежевый текст кнопки при наведении */
+}
+
+
+.slider-box-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 10px 15px;
+    padding-bottom: 5px;
+}
+
+.slider-box-text a {
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.slider-box-text .highest-bid {
+    color: #5e5e5e;
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin-top: 20px;
+    /* Отступ сверху */
+    margin-bottom: 20px;
+    /* Отступ снизу */
+}
+
+.slider-box-text .price {
+    color: #fff;
+    font-weight: 600;
+    /* Или bold */
+    margin-top: 5px;
+    font-size: 1rem;
+    /* Увеличенный размер шрифта */
+    letter-spacing: 1px;
+}
+
+.swiper-pagination {
+    position: absolute;
+    bottom: 10px;
+    /* Располагаем точки на 10px выше нижнего края секции */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+
+.bsp-swiper-pagination {
+    position: absolute;
+    bottom: 15px;
+    /* Опустим пагинацию ниже контейнера */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+
+.swiper-wrapper {
+    padding-bottom: 20px;
+    /* Минимальное расстояние до нижней границы для корректного отображения */
+}
+
+/* Стиль для активной точки пагинации */
+.swiper-pagination-bullet-active {
+    background-color: #ed6b2e !important;
+    /* Цвет для активной точки пагинации */
+}
+
+/*===основная кнопка===============================*/
+
+.preis-button {
+    color: #f59c64;
+    /* Оранжевый текст */
+    background-color: #F5F5DC;
+    /* Бежевый фон */
+    border: 1px solid #f59c64;
+    /* Оранжевая граница */
+    padding: 10px 20px;
+    font-size: 16px;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-top: 20px;
+    /* Отступ сверху */
+    margin-bottom: 20px;
+    /* Отступ снизу */
+    /* центрирование кнопки */
+    /*display: block; 
+    margin: 0 auto;*/
+}
+
+.preis-button:hover {
+    background-color: #ed6b2e;
+    /* Оранжевый фон при наведении */
+    color: #F5F5DC;
+    /* Бежевый текст при наведении */
+}
+
+/*===кнопка для пробников===============================*/
+
+.bsp-button {
+    color: #F5F5DC;
+    /* Оранжевый текст */
+    background-color: #ed6b2e;
+    /* Бежевый фон */
+    border: 1px solid #ed6b2e;
+    /* Оранжевая граница */
+    padding: 10px 20px;
+    font-size: 16px;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-top: 20px;
+    /* Отступ сверху */
+    margin-bottom: 20px;
+    /* Отступ снизу */
+    /* центрирование кнопки */
+    /*display: block; 
+    margin: 0 auto;*/
+}
+
+.fu-berlin:hover {
+    background-color: #FDF8EC;
+    color: #470924;
+}
+
+.halle:hover {
+    background-color: #FEF4DA;
+    color: #101423;
+}
+
+.muenchen:hover {
+    background-color: #FBE8C4;
+    color: #121331;
+}
+
+.kit:hover {
+    background-color: #F5F7C8;
+    color: #0C152B;
+}
+
+.bochum:hover {
+    background-color: #F6D2AF;
+    color: #0F1731;
+}
+
+.nordhausen:hover {
+    background-color: #FCF5E7;
+    color: #0D1327;
+}
+
+.heidelberg:hover {
+    background-color: #FCD6A8;
+    color: #0C0E1F;
+}
+
+.tu-berlin:hover {
+    background-color: #F5D2B9;
+    color: #3B1723;
+}
+
+.leipzig:hover {
+    background-color: #63ABDA;
+    color: #0D3D68;
+}
+
+.frankfurt:hover {
+    background-color: #E2E6F3;
+    color: #373753;
+}
+
+.marburg:hover {
+    background-color: #fff;
+    color: #222B51;
+}
+
+/*===модульное окно информации===============================*/
+
+/* Стили для модального окна */
+.modal {
+    display: none;
+    /* Скрыть модальное окно по умолчанию */
+    position: fixed;
+    /* Фиксированное позиционирование */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    /* Полупрозрачный черный фон */
+    justify-content: center;
+    /* Центрирование содержимого по горизонтали */
+    align-items: center;
+    /* Центрирование содержимого по вертикали */
+    z-index: 1000;
+    /* Убедитесь, что модальное окно поверх других элементов */
+    overflow: auto;
+    /* Включает прокрутку, если нужно */
+}
+
+.modal-content {
+    background: #f59c64;
+    /* Оранжевый фон */
+    padding: 20px;
+    border-radius: 8px;
+    text-align: left;
+    position: relative;
+    max-width: 80%;
+    margin: 5% auto;
+    /* Центрирует окно по вертикали и горизонтали */
+    display: flex;
+    /* Используем флекс для размещения изображения и текста в одну строку */
+    align-items: center;
+    /* Выравнивание по центру по вертикали */
+    font-family: 'Montserrat', sans-serif;
+    /*max-height: 90vh; /* Максимальная высота модального окна */
+    /*overflow-y: auto; /* Включает вертикальную прокрутку, если нужно */
+}
+
+.modal-content h2 {
+    color: #F5F5DC;
+    /* Бежевый цвет */
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.modal-content p {
+    color: #F5F5DC;
+    /* Бежевый цвет */
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.modal-content button {
+    color: #f59c64;
+    /* Оранжевый текст */
+    background-color: #F5F5DC;
+    /* Бежевый фон */
+    border: 1px solid #f59c64;
+    /* Оранжевая граница */
+    padding: 10px 20px;
+    font-size: 16px;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-top: 20px;
+    /* Отступ сверху */
+    margin-bottom: 20px;
+    /* Отступ снизу */
+}
+
+.modal-content button:hover {
+    background-color: #ed6b2e;
+    /* Оранжевый фон при наведении */
+    color: #F5F5DC;
+    /* Бежевый текст при наведении */
+}
+
+.modal-content .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    color: #F5F5DC;
+    /* Бежевый цвет крестика */
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.modal-content .close:hover {
+    background: #ed6b2e;
+    color: #F5F5DC;
+    /* Оранжевый цвет крестика при наведении */
+}
+
+.modal-content .celebration {
+    max-width: 250px;
+    /* Уменьшить размер изображения до 100px */
+    height: auto;
+    margin-right: 20px;
+    /* Отступ справа для изображения */
+}
+
+.modal-content .description {
+    flex: 1;
+    /* Занимает оставшееся место */
+}
+
+.modal-content .description h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.modal-content .description ul {
+    list-style-type: disc;
+    margin: 0;
+    padding: 0;
+    margin-left: 20px;
+}
+
+.modal-content .description li {
+    margin-bottom: 10px;
+}
+
+/* Стили для контейнера содержимого */
+.content-container {
+    display: flex;
+    /* Используем флекс для размещения видео и резюме бок о бок */
+    justify-content: space-between;
+    /* Распределяем элементы по краям */
+    align-items: center;
+    /* Выравнивание по центру по вертикали */
+    width: 100%;
+}
+
+/* Стили для контейнера видео */
+.video-container {
+    left: -275px;
+    /* Смещаем левую позицию в два раза больше */
+    position: relative;
+    width: 350px;
+    /* Увеличиваем ширину в два раза */
+    height: 600px;
+    /* Увеличиваем высоту в два раза */
+    overflow: hidden;
+    /* Скрываем выходящие за пределы элементы */
+    border-radius: 15px;
+    /* Скругляем углы */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    /* Тень для видео */
+}
+
+.video-container iframe {
+    position: absolute;
+    top: -600px;
+    /* Увеличиваем в два раза */
+    left: 0;
+    width: 100%;
+    height: 300%;
+    /* Увеличиваем высоту iframe */
+    border: 0;
+    clip-path: inset(100px 0px 100px 0px);
+    /* Обрезаем видео для сохранения эффекта */
+}
+
+/* Стили контейнера резюме */
+.resume-container {
+    left: -150px;
+    position: relative;
+    width: 350px;
+    /* Уменьшенная ширина изображения */
+    height: auto;
+    margin: 0 auto;
+    perspective: 1000px;
+    /* Перспектива для 3D эффекта */
+    cursor: pointer;
+    /* Указатель на интерактивность */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    /* Тень для изображения */
+    border-radius: 10px;
+    /* Скругленные углы */
+    transition: transform 0.8s ease-in-out;
+    /* Плавный переход с задержкой */
+}
+
+/* Стили для изображения в резюме */
+.resume-container img {
+    width: 100%;
+    transform-style: preserve-3d;
+    /* Сохраняем 3D пространство */
+    transition: transform 0.6s ease-in-out;
+    /* Плавный переход при повороте */
+}
+
+/* Поворот для обратной стороны любого изображения в контейнере */
+.resume-container.flipped img {
+    transform: rotateY(360deg);
+    /* Поворот на 360 градусов */
+}
+
+/* Подсказка для пользователя */
+.cursor-tooltip {
+    position: fixed;
+    pointer-events: none;
+    /* Отключаем взаимодействие с подсказкой */
+    background-color: #ed6b2e;
+    color: #F5F5DC;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    opacity: 0.9;
+    z-index: 1000;
+    transform: translate(-50%, -100%);
+    display: none;
+}
+
+/* Стили для правой колонки */
+.mentor-sidebar {
+    position: absolute;
+    top: 100px;
+    /* Отступ ниже крестика */
+    right: 50px;
+    /* Отступ справа */
+    display: flex;
+    flex-wrap: wrap;
+    /* Позволяет переносить элементы на новую строку */
+    justify-content: center;
+    /* Центровка менторов в колонках */
+    align-items: flex-start;
+    gap: 15px;
+    /* Расстояние между колонками */
+    max-width: 200px;
+    /* Максимальная ширина для двух колонок */
+}
+
+/* Стили заголовка в правой колонке */
+.mentor-sidebar h3 {
+    font-size: 16px;
+    /* Уменьшаем шрифт */
+    text-align: center;
+    /* Центровка текста */
+    color: #101423;
+    /* Цвет заголовка */
+    margin-bottom: 15px;
+    /* Отступ под заголовком */
+    width: 150px;
+    /* Ограничиваем ширину заголовка */
+}
+
+/* Стили для кружочков с изображениями */
+.circle {
+    position: relative;
+    /* Добавлено для позиционирования иконки */
+    width: 70px;
+    /* Размер кружка */
+    height: 70px;
+    background-color: #E86639;
+    /* Цвет фона для случая отсутствия изображения */
+    border-radius: 50%;
+    margin-bottom: 20px;
+    /* Отступ между кружками */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    /* Тень для кружка */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    background-size: cover;
+    /* Изображение растягивается по кружку */
+    background-position: center;
+    /* Центровка изображения */
+    background-repeat: no-repeat;
+    /* Избегаем повторения изображения */
+}
+
+.circle:hover {
+    transform: scale(1.1);
+    /* Эффект увеличения при наведении */
+}
+
+/* Стили для иконки с галочкой */
+.circle i {
+    position: absolute;
+    right: 0px;
+    /* Позиция ближе к краю */
+    bottom: 0px;
+    /* Позиция ближе к краю */
+    z-index: 3;
+    /* background-color: #ffffff; */
+    border-radius: 50%;
+    /* Скругление для фона */
+    padding: 1px;
+    /* Уменьшенный padding */
+    font-size: 20px;
+    /* Уменьшенный размер иконки */
+    color: #F5F5DC;
+    /* Цвет галочки */
+    /* border: 1px solid #ffffff; Тонкий белый контур для аккуратности */
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+    /* Тень для легкого объема */
+}
+
+/* Адаптивные стили для мобильных устройств */
+@media (max-width: 768px) {
+    .text {
+        font-size: 1.2em;
+    }
+
+    .modal-content {
+        flex-direction: column;
+        align-items: flex-start;
+        max-width: 90%;
+        max-height: 80%;
+        /* Устанавливаем максимальную высоту модального окна */
+        overflow-y: auto;
+        /* Добавляем вертикальную прокрутку */
+    }
+
+    .modal-content .celebration {
+        margin-right: 0;
+        margin-bottom: 20px;
+        max-width: 150px;
+        /* Еще больше уменьшить изображение */
+    }
+
+    .modal-content h2 {
+        font-size: 18px;
+        /* Уменьшить размер текста */
+    }
+
+    .modal-content p,
+    .modal-content .description h3,
+    .modal-content .description li {
+        font-size: 14px;
+        /* Уменьшить размер текста */
+    }
+
+    .modal-content button {
+        padding: 8px 16px;
+        font-size: 14px;
+        /* Уменьшить размер кнопки и текста */
+    }
+}
+
+/* Стили для контейнера менторов содержимого на мобильных устройствах */
+@media (max-width: 768px) {
+    .content-container {
+        flex-direction: column;
+        /* Ставим элементы в колонку */
+        align-items: center;
+        /* Выравниваем по центру по горизонтали */
+        justify-content: center;
+        /* Центровка элементов по вертикали */
+    }
+
+    /* Стили контейнера резюме */
+    .resume-container {
+        left: 0px;
+        width: 100%;
+        /* Устанавливаем ширину 100% */
+        height: auto;
+        /* Высота автоматически по содержимому */
+        margin: 10px 0;
+        /* Устанавливаем отступы сверху и снизу */
+        box-shadow: none;
+        /* Убираем тень */
+    }
+
+    .resume-container img {
+        width: 95%;
+        /* Устанавливаем ширину 95% */
+    }
+
+    /* Стили для контейнера видео */
+    .video-container {
+        left: 0px;
+        /* Смещаем левую позицию в два раза больше */
+        position: relative;
+        width: 275px;
+        /* Увеличиваем ширину в два раза */
+        height: 450px;
+        /* Увеличиваем высоту в два раза */
+        overflow: hidden;
+        /* Скрываем выходящие за пределы элементы */
+        border-radius: 15px;
+        /* Скругляем углы */
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        /* Тень для видео */
+    }
+
+    .video-container iframe {
+        position: absolute;
+        top: -450px;
+        /* Увеличиваем в два раза */
+        left: 0;
+        width: 100%;
+        height: 300%;
+        /* Увеличиваем высоту iframe */
+        border: 0;
+        clip-path: inset(100px 0px 100px 0px);
+        /* Обрезаем видео для сохранения эффекта */
+    }
+
+    /* Подсказка для пользователя */
+    .cursor-tooltip {
+        font-size: 10px;
+        /* Уменьшаем размер шрифта */
+        padding: 3px 6px;
+        /* Уменьшаем отступы */
+        transform: translate(-50%, -120%);
+        /* Поднимаем подсказку выше */
+    }
+
+    /* Стили для правой колонки */
+    .mentor-sidebar {
+        position: relative;
+        /* Убираем абсолютное позиционирование */
+        top: 20px;
+        /* Убираем верхнее смещение */
+        right: auto;
+        /* Убираем правое смещение */
+        align-items: center;
+        /* Центровка элементов */
+        gap: 10px;
+        /* Уменьшаем расстояние между элементами */
+        max-width: 100%;
+        /* Устанавливаем максимальную ширину 100% */
+    }
+
+    /* Стили заголовка в правой колонке */
+    .mentor-sidebar h3 {
+        font-size: 14px;
+        /* Уменьшаем шрифт */
+        width: 100%;
+        /* Устанавливаем ширину 100% */
+    }
+}
+
+/* Стили для слайдера */
+@media (max-width: 768px) {
+    #slider-section {
+        width: 85%;
+    }
+}
